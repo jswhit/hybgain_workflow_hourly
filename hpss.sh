@@ -3,8 +3,7 @@
 hr=`echo $analdate | cut -c9-10`
 analdatem1=`${incdate} $analdate -6`
 exitstat=0
-
-if [ $machine == "gaea" ]; then
+if [ $machine == "gaeac5" ] ||  [ $machine == "gaeac6" ]; then
    htar=/sw/rdtn/hpss/default/bin/htar
    hsi=/sw/rdtn/hpss/default/bin/hsi
 else
@@ -58,7 +57,7 @@ fi
 
 # save restarts at 00UTC
 #if [ $analdatem1 -ge 2016010400 ] && [ -s restarts ] && [ $hr == "06" ];  then
-#   htar -cvf ${hsidir}/${analdatem1}_restarts.tar restarts
+#   $htar -cvf ${hsidir}/${analdatem1}_restarts.tar restarts
 #   $hsi ls -l ${hsidir}/${analdatem1}_restarts.tar
 #   if [  $? -eq 0 ]; then
 #      echo "hsi restarts done, deleting data..."
@@ -101,7 +100,7 @@ if  [ $save_hpss_subset == "true" ]; then
    #fi
    #cd ..
    # exclude long forecast directory
-   $htar -cvf ${hsidir}/${analdate}_subset.tar ${analdate}/gdas* ${analdate}/*ensmean* ${analdate}/*control* ${analdate}/logs
+   $htar -cvf ${hsidir}/${analdate}_subset.tar ${analdate}/${RUN}* ${analdate}/*ensmean* ${analdate}/*control* ${analdate}/logs
 fi
 $hsi ls -l ${hsidir}/${analdate}_subset.tar
 exitstat=$?
@@ -112,13 +111,11 @@ else
    # remove files to save space
    cd ${analdate}
    /bin/rm -f diag*cris* diag*airs* diag*iasi*
+   /bin/rm -f *chgres
    /bin/rm -rf ensmean
-   if [ $hr == '03' ] || [ $hr == '09' ] || [ $hr == '15'] || [ $hr == '21' ]; then
-       echo "analhr=$hr keep control dir"
-   else
-       echo "analhr=$hr remove control dir"
-       /bin/rm -rf control
-   fi
+   #if [ $hr != '00' ]; then
+   #    /bin/rm -rf control
+   #fi
 fi
 
 exit $exitstat

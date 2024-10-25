@@ -494,6 +494,7 @@ echo "export analdate=${analdate}" > $startupenv
 echo "export analdate_end=${analdate_end}" >> $startupenv
 echo "export fg_only=false" > $datapath/fg_only.sh
 echo "export cold_start=false" >> $datapath/fg_only.sh
+echo "unset skip_calc_increment" >> $datapath/fg_only.sh
 
 cd $homedir
 

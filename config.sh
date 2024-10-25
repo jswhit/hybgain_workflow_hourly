@@ -6,7 +6,7 @@ echo "running on $machine using $NODES nodes and $cores CORES"
 
 export ndates_job=1 # number of DA cycles to run in one job submission
 # resolution of control and ensmemble.
-export RES=192
+export RES=384
 export RES_CTL=384
 # Penney 2014 Hybrid Gain algorithm with beta_1=1.0
 # beta_2=alpha and beta_3=0 in eqn 6 
@@ -26,7 +26,7 @@ export beta=1000 # percentage of enkf increment (*10)
 # in this case, to recenter around EnVar analysis set recenter_control_wgt=100
 export recenter_control_wgt=100
 export recenter_ensmean_wgt=`expr 100 - $recenter_control_wgt`
-export exptname="C${RES}_hybcov_hourly_acftnew"
+export exptname="C${RES}_hybcov_hourly"
 # for 'passive' or 'replay' cycling of control fcst 
 export replay_controlfcst='false'
 
@@ -129,35 +129,50 @@ elif [ $machine == "hercules" ]; then
    module list
    export HDF5_DISABLE_VERSION_CHECK=1
    export WGRIB=`which wgrib`
-elif [ "$machine" == 'gaea' ]; then
-   export basedir=/lustre/f2/dev/${USER}
-   export datadir=/lustre/f2/scratch/${USER}
+elif [ "$machine" == 'gaeac5' ]; then
+   export basedir=/gpfs/f5/nggps_psd/scratch/${USER}
+   export datadir=${basedir}
    export hsidir="/ESRL/BMC/gsienkf/2year/whitaker/gaea/${exptname}"
-   export obs_datapath=/lustre/f2/dev/Jeffrey.S.Whitaker/dumps
-   source /lustre/f2/dev/role.epic/contrib/Lmod_init.sh
-   module unload cray-libsci
-   module load PrgEnv-intel/8.3.3
-   module load intel-classic/2023.1.0
-   module load cray-mpich/8.1.25
-   module use /lustre/f2/dev/wpo/role.epic/contrib/spack-stack/c5/spack-stack-dev-20230717/envs/unified-env/install/modulefiles/Core
-   module use /lustre/f2/dev/wpo/role.epic/contrib/spack-stack/c5/modulefiles
+   export obs_datapath=/gpfs/f5/nggps_psd/proj-shared/Jeffrey.S.Whitaker/dumps
+   module use /ncrc/proj/epic/spack-stack//spack-stack-1.6.0/envs/gsi-addon-dev/install/modulefiles/Core
    module load stack-intel/2023.1.0
    module load stack-cray-mpich/8.1.25
-   module load stack-python/3.9.12
+   module load netcdf-c/4.9.2
+   module load netcdf-fortran/4.6.1
+   #module load cray-mpich/8.1.28
    module load parallelio
-   module load bufr/11.7.0
-   module load crtm/2.4.0
+   module load crtm/2.4.0.1
    module load gsi-ncdiag
    module load grib-util
+   module load bufr/11.7.0
+   module load python
+   module load py-netcdf4
    module list
-   export PATH="/lustre/f2/dev/Jeffrey.S.Whitaker/conda/bin:${PATH}"
-   which python
-   #export MKLROOT=/opt/intel/oneapi/mkl/2022.0.2
-   #export LD_LIBRARY_PATH="${MKLROOT}/lib/intel64:${LD_LIBRARY_PATH}"
+   export LD_LIBRARY_PATH="/opt/intel/oneapi/mkl/2022.0.2/lib/intel64:${LD_LIBRARY_PATH}"
+   export HDF5_DISABLE_VERSION_CHECK=1
+   export WGRIB=`which wgrib`
+elif [ "$machine" == 'gaeac6' ]; then
+   export basedir=/gpfs/f6/ira-da/scratch/${USER}
+   export datadir=${basedir}
+   export hsidir="/ESRL/BMC/gsienkf/2year/whitaker/gaea/${exptname}"
+   export obs_datapath=/gpfs/f6/ira-da/proj-shared/Jeffrey.S.Whitaker/dumps
+   module use /ncrc/proj/epic/spack-stack/c6/spack-stack-1.6.0/envs/gsi-addon/install/modulefiles/Core
+   module load stack-intel/2023.2.0
+   module load stack-cray-mpich/8.1.29
+   #module load cray-mpich/8.1.28
+   module load parallelio
+   module load crtm/2.4.0.1
+   module load gsi-ncdiag
+   module load grib-util
+   module load bufr/11.7.0
+   module load python
+   module load py-netcdf4
+   module list
+   export LD_LIBRARY_PATH="/opt/intel/oneapi/mkl/2022.1.0/lib/intel64:${LD_LIBRARY_PATH}"
    export HDF5_DISABLE_VERSION_CHECK=1
    export WGRIB=`which wgrib`
 else
-   echo "machine must be 'hera', 'orion', 'hercules' or 'gaea' got $machine"
+   echo "machine must be 'hera', 'orion', 'hercules' or 'gaeac5'/'gaeac6' got $machine"
    exit 1
 fi
 export datapath="${datadir}/${exptname}"
@@ -450,13 +465,26 @@ elif [ "$machine" == 'orion' ] || [ $machine == "hercules" ]; then
    export enkfbin=${execdir}/global_enkf
    export gsiexec=${execdir}/global_gsi
    export CHGRESEXEC=${execdir}/enkf_chgres_recenter_nc.x
-elif [ "$machine" == 'gaea' ]; then
-   export fv3gfspath=/lustre/f2/dev/Jeffrey.S.Whitaker/fix_NEW
-   export FIXDIR=/lustre/f2/pdata/ncep_shared/emc.nemspara/RT/NEMSfv3gfs/input-data-20220414
+elif [ "$machine" == 'gaeac5' ]; then
+   export fv3gfspath=/gpfs/f5/nggps_psd/proj-shared/Jeffrey.S.Whitaker/fix_NEW
+   export FIXDIR=/gpfs/f5/epic/world-shared/UFS-WM_RT/NEMSfv3gfs/input-data-20240501
    export FIXDIR_gcyc=${fv3gfspath}
    export FIXFV3=${fv3gfspath}/fix_fv3_gmted2010
    export FIXGLOBAL=${fv3gfspath}/fix_am
-   export gsipath=/lustre/f2/dev/Jeffrey.S.Whitaker/GSI
+   export gsipath=/gpfs/f5/nggps_psd/proj-shared/Jeffrey.S.Whitaker/GSI
+   export fixgsi=${gsipath}/fix
+   export fixcrtm=$CRTM_FIX
+   export execdir=${enkfscripts}/exec_${machine}
+   export enkfbin=${execdir}/global_enkf
+   export gsiexec=${execdir}/global_gsi
+   export CHGRESEXEC=${execdir}/enkf_chgres_recenter_nc.x
+elif [ "$machine" == 'gaeac6' ]; then
+   export fv3gfspath=/gpfs/f6/drsa-precip4/proj-shared/Jeffrey.S.Whitaker/fix_NEW
+   export FIXDIR=/gpfs/f6/drsa-precip4/proj-shared/Jeffrey.S.Whitaker/input-data-20240501
+   export FIXDIR_gcyc=${fv3gfspath}
+   export FIXFV3=${fv3gfspath}/fix_fv3_gmted2010
+   export FIXGLOBAL=${fv3gfspath}/fix_am
+   export gsipath=/gpfs/f6/drsa-precip4/proj-shared/Jeffrey.S.Whitaker/GSI
    export fixgsi=${gsipath}/fix
    export fixcrtm=$CRTM_FIX
    export execdir=${enkfscripts}/exec_${machine}
@@ -466,6 +494,7 @@ elif [ "$machine" == 'gaea' ]; then
 else
    echo "${machine} unsupported machine"
    exit 1
+fi
 fi
 # set to .true. to run hydrostatic version of model 
 export hydrostatic=.false.
