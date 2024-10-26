@@ -165,8 +165,13 @@ if [ "$cold_start" == "true" ]; then
    iau_inc_files=""
 else
    if [[ $iau_delthrs -eq -1 ]]; then
-      reslatlondynamics="fv3_increment1.nc"
-      readincrement=T
+      if [ -z $skip_calc_increment ]; then
+         reslatlondynamics="fv3_increment1.nc"
+         readincrement=T
+      else
+         reslatlondynamics=""
+         readincrement=F
+      fi
       iau_offset=-1
       iau_inc_files=""
    else
