@@ -87,8 +87,8 @@ mkdir -p ${current_logdir}
 
 # if nanals2>0, extend nanals2 members out to FHMAX_LONGER=6
 # but only at 03,09,15,21 UTC (for comparison with 6-h cycled system)
-if [ $hr = "03" ] || [ $hr = "09" ] || [ $hr = "15" ] || [ $hr = "21" ]; then
-  if [ $cold_start == "true" ]; then
+if [ $hr = "03" ] || [ $hr = "09" ] || [ $hr = "15" ] || [ $hr = "21" ] ; then
+  if [ $cold_start == "true" ] || [ ! -z $skip_calc_increment ]; then
      export nanals2=-1
      echo "no longer forecast extension"
   else
