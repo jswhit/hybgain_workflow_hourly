@@ -354,10 +354,7 @@ write_nsflip:            .true.
 iau_offset:              ${iau_offset}
 imo:                     ${LONB}
 jmo:                     ${LATB}
-nfhout:                  ${FHOUT}
-nfhmax_hf:               -1
-nfhout_hf:               -1
-nsout:                   -1
+output_fh:               ${FHOUT} -1
 EOF
 cat model_configure
 
