@@ -8,7 +8,7 @@ if [ $machine == 'noaacloud' ]; then
   sruncmd="srun --mpi=pmi2 --export=ALL"
   python=/usr/bin/python
 else
-  sruncmd="srun"
+  sruncmd="srun --export=ALL"
   python=`which python`
 fi
 if [ $machine == 'gaeac5' ]; then
