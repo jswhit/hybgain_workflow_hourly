@@ -135,11 +135,10 @@ elif [ "$machine" == 'gaeac5' ]; then
    export hsidir="/ESRL/BMC/gsienkf/2year/whitaker/gaea/${exptname}"
    export obs_datapath=/gpfs/f5/nggps_psd/proj-shared/Jeffrey.S.Whitaker/dumps
    module use /ncrc/proj/epic/spack-stack//spack-stack-1.6.0/envs/gsi-addon-dev/install/modulefiles/Core
-   module load stack-intel/2023.1.0
-   module load stack-cray-mpich/8.1.25
+   module load stack-intel/2023.2.0
+   module load stack-cray-mpich/8.1.28
    module load netcdf-c/4.9.2
    module load netcdf-fortran/4.6.1
-   #module load cray-mpich/8.1.28
    module load parallelio
    module load crtm/2.4.0.1
    module load gsi-ncdiag
@@ -494,7 +493,6 @@ elif [ "$machine" == 'gaeac6' ]; then
 else
    echo "${machine} unsupported machine"
    exit 1
-fi
 fi
 # set to .true. to run hydrostatic version of model 
 export hydrostatic=.false.
